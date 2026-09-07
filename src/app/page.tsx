@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { getSnapshot, availableTeams, SELECTED_TEAM_COOKIE } from "@/lib/upstashSnapshot";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default async function Home(props: PageProps<"/">) {
   const scraped = process.env.DATA_SOURCE === "scrape";
@@ -29,6 +30,7 @@ export default async function Home(props: PageProps<"/">) {
 
   return (
     <main className="hero flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
+      <ThemeToggle className="absolute right-4 top-4 z-10" />
       <div className="hero-moon-glow" aria-hidden />
 
       <svg
@@ -39,8 +41,8 @@ export default async function Home(props: PageProps<"/">) {
       >
         <defs>
           <linearGradient id="gradA" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3d4c8c" />
-            <stop offset="100%" stopColor="#1c2450" />
+            <stop offset="0%" style={{ stopColor: "var(--wave-a-1)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--wave-a-2)" }} />
           </linearGradient>
         </defs>
         <path
@@ -62,8 +64,8 @@ export default async function Home(props: PageProps<"/">) {
       >
         <defs>
           <linearGradient id="gradB" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#5568c2" />
-            <stop offset="100%" stopColor="#293066" />
+            <stop offset="0%" style={{ stopColor: "var(--wave-b-1)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--wave-b-2)" }} />
           </linearGradient>
         </defs>
         <path
@@ -85,13 +87,13 @@ export default async function Home(props: PageProps<"/">) {
       >
         <defs>
           <linearGradient id="gradC" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8fa3f0" />
-            <stop offset="100%" stopColor="#4a5aa8" />
+            <stop offset="0%" style={{ stopColor: "var(--wave-c-1)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--wave-c-2)" }} />
           </linearGradient>
           <linearGradient id="crest" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#c2cdfb" stopOpacity="0" />
-            <stop offset="50%" stopColor="#e8ecff" />
-            <stop offset="100%" stopColor="#c2cdfb" stopOpacity="0" />
+            <stop offset="0%" style={{ stopColor: "var(--crest-edge)" }} stopOpacity="0" />
+            <stop offset="50%" style={{ stopColor: "var(--crest-mid)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--crest-edge)" }} stopOpacity="0" />
           </linearGradient>
         </defs>
         <path

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV_ITEMS = [
   { key: "roster", label: "Roster", href: "/roster" },
@@ -37,6 +38,7 @@ export function AppHeader({
         >
           Log out
         </a>
+        <ThemeToggle />
       </nav>
     </div>
   );

@@ -84,10 +84,17 @@ function hslToHex(h: number, s: number, l: number): string {
 
 // Several NFL brand colors (Bears navy, Raiders black, Seahawks/Patriots navy,
 // Browns brown, ...) are too dark to read as text on our dark background.
-// Same hue, floor the lightness so every team stays legible.
-export function teamTextColor(abbr: string): string {
+// Same hue, floor the lightness so every team stays legible. On the light
+// theme it's the opposite handful of teams (Steelers gold, Saints tan,
+// Titans light blue, ...) that wash out against a pale/white background, so
+// there we cap lightness instead of flooring it.
+export function teamTextColor(abbr: string, theme: "dark" | "light" = "dark"): string {
   const base = teamColor(abbr);
   const [h, s, l] = hexToHsl(base);
+  if (theme === "light") {
+    const maxLightness = 0.45;
+    return l > maxLightness ? hslToHex(h, Math.max(s, 0.35), maxLightness) : base;
+  }
   const minLightness = 0.55;
   return l < minLightness ? hslToHex(h, Math.max(s, 0.35), minLightness) : base;
 }

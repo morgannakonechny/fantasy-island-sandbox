@@ -10,6 +10,43 @@
   --accent: #5568c2;
   --accent-2: #8fa3f0;
   --accent-glow: rgba(143, 163, 240, 0.35);
+  --glow-2: rgba(85, 104, 194, 0.18);
+
+  /* Homepage hero — "sea at night": moonlight + a deep indigo sea. */
+  --moon-glow-color: rgba(143, 163, 240, 0.28);
+  --wave-a-1: #3d4c8c;
+  --wave-a-2: #1c2450;
+  --wave-b-1: #5568c2;
+  --wave-b-2: #293066;
+  --wave-c-1: #8fa3f0;
+  --wave-c-2: #4a5aa8;
+  --crest-edge: #c2cdfb;
+  --crest-mid: #e8ecff;
+}
+
+/* Light mode — "sea during the day": sunlight + a bright turquoise sea.
+   Only overrides; :root above stays the default (dark) palette. */
+:root[data-theme="light"] {
+  --background: #eaf4fb;
+  --surface: #ffffff;
+  --surface-2: #eef4fa;
+  --border: rgba(16, 40, 70, 0.1);
+  --foreground: #16213a;
+  --muted: #5b6b85;
+  --accent: #2563a8;
+  --accent-2: #0f9c96;
+  --accent-glow: rgba(15, 156, 150, 0.22);
+  --glow-2: rgba(255, 196, 102, 0.3);
+
+  --moon-glow-color: rgba(255, 205, 120, 0.55);
+  --wave-a-1: #2f6fb0;
+  --wave-a-2: #1c4d80;
+  --wave-b-1: #3fa9c9;
+  --wave-b-2: #21748f;
+  --wave-c-1: #8fe3e0;
+  --wave-c-2: #45b6c4;
+  --crest-edge: #d8faf6;
+  --crest-mid: #ffffff;
 }
 
 @theme inline {
@@ -32,7 +69,7 @@ body {
      instead, so it holds steady and covers the full scroll length. */
   background:
     radial-gradient(ellipse 900px 500px at 15% -10%, var(--accent-glow), transparent) no-repeat fixed,
-    radial-gradient(ellipse 700px 500px at 110% 10%, rgba(85, 104, 194, 0.18), transparent) no-repeat fixed,
+    radial-gradient(ellipse 700px 500px at 110% 10%, var(--glow-2), transparent) no-repeat fixed,
     var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
@@ -52,7 +89,7 @@ body {
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(143, 163, 240, 0.28), transparent 70%);
+  background: radial-gradient(circle, var(--moon-glow-color), transparent 70%);
   z-index: 0;
   pointer-events: none;
 }
@@ -96,4 +133,9 @@ body {
 @keyframes sparkle-pulse {
   0%, 100% { opacity: 0; transform: scale(0.6); }
   50% { opacity: 0.9; transform: scale(1); }
+}
+
+/* Stars only make sense once the sun's down. */
+:root[data-theme="light"] .sparkle {
+  display: none;
 }

@@ -1,5 +1,8 @@
+"use client";
+
 import { teamTextColor } from "@/lib/nflTeamColors";
 import { positionStyle } from "@/lib/positionStyles";
+import { useTheme } from "@/lib/theme";
 
 export type Player = {
   playerKey: string;
@@ -19,6 +22,7 @@ export type RosterData = { teamName: string; players: Player[] };
 const WARNING_STATUSES = new Set(["Q", "O", "D", "IR"]);
 
 export function RosterView({ data }: { data: RosterData }) {
+  const { theme } = useTheme();
   const starterPlayers = data.players.filter((p) => p.position !== "BN");
   const starters = starterPlayers.length;
   const bench = data.players.length - starters;
@@ -81,7 +85,7 @@ export function RosterView({ data }: { data: RosterData }) {
           >
             <span
               className="h-8 w-1 shrink-0 rounded-full"
-              style={{ backgroundColor: teamTextColor(p.team) }}
+              style={{ backgroundColor: teamTextColor(p.team, theme) }}
               aria-hidden
             />
             {p.imageUrl ? (

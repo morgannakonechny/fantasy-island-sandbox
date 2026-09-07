@@ -1,10 +1,14 @@
+"use client";
+
 import { teamTextColor } from "@/lib/nflTeamColors";
 import { positionStyle } from "@/lib/positionStyles";
+import { useTheme } from "@/lib/theme";
 import type { ScheduleDay } from "@/lib/parseSchedule";
 
 export type { ScheduleDay };
 
 export function ScheduleView({ teamName, days }: { teamName: string; days: ScheduleDay[] }) {
+  const { theme } = useTheme();
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-6 sm:p-8">
       <div className="mb-6">
@@ -32,7 +36,7 @@ export function ScheduleView({ teamName, days }: { teamName: string; days: Sched
                   <div key={p.playerKey} className="flex items-center gap-3 px-4 py-3">
                     <span
                       className="h-8 w-1 shrink-0 rounded-full"
-                      style={{ backgroundColor: teamTextColor(p.team) }}
+                      style={{ backgroundColor: teamTextColor(p.team, theme) }}
                       aria-hidden
                     />
                     {p.imageUrl ? (
@@ -55,10 +59,10 @@ export function ScheduleView({ teamName, days }: { teamName: string; days: Sched
                         {p.name}
                       </p>
                       <p className={`text-sm ${p.isStarter ? "text-muted" : "text-muted opacity-60"}`}>
-                        <span style={{ color: teamTextColor(p.team) }}>{p.team}</span>
+                        <span style={{ color: teamTextColor(p.team, theme) }}>{p.team}</span>
                         {" "}
                         {p.isHome ? "vs" : "@"}{" "}
-                        <span style={{ color: teamTextColor(p.opponent) }}>{p.opponent}</span>
+                        <span style={{ color: teamTextColor(p.opponent, theme) }}>{p.opponent}</span>
                         {" · "}
                         {p.timeLabel}
                       </p>
