@@ -25,14 +25,21 @@ export function scrapeRoster(html: string): RosterPlayer[] {
   const $ = cheerio.load(html);
   const players: RosterPlayer[] = [];
 
-  $("#team-roster tr[data-pos]").each((_, el) => {
+  // Your OWN roster is the editable view: data-pos lives on the <tr> itself
+  // (plus swap-target/dropdown attributes for the lineup editor). Any OTHER
+  // team's roster is read-only and has no data-pos on the row at all — the
+  // position only shows up on an inner <span class="pos-label" data-pos="...">.
+  // Select on rows containing a player link either way, and try the <tr>
+  // attribute first, falling back to the inner pos-label span.
+  $("#team-roster tr").each((_, el) => {
     const row = $(el);
     const nameLink = row.find("a[data-ys-playerid]").first();
-    if (nameLink.length === 0) return; // empty roster slot, nothing assigned
+    if (nameLink.length === 0) return; // header row, or an empty/unfilled slot
 
     const playerKey = nameLink.attr("data-ys-playerid") ?? "";
     const name = nameLink.attr("title")?.trim() || nameLink.text().trim() || "Unknown player";
-    const position = (row.attr("data-pos") ?? "").replace(/_/g, "/");
+    const rawPosition = row.attr("data-pos") ?? row.find(".pos-label[data-pos]").first().attr("data-pos") ?? "";
+    const position = rawPosition.replace(/_/g, "/");
 
     // Scoped to .D-b specifically — a generic ".Fz-xxs" selector also matches
     // the injury-status badge (see below), which sits earlier in the DOM for

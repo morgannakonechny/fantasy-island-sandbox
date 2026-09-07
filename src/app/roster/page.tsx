@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { RosterView, type RosterData } from "@/components/RosterView";
 import { formatRelativeTime } from "@/lib/relativeTime";
 
@@ -30,12 +31,25 @@ export default function RosterPage() {
   }
 
   if (error) {
+    const scrapedModeError = error === "no_data_yet" || error === "no_team_selected";
     return (
       <main className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-        <p className="text-red-400">Couldn&apos;t load your roster ({error}).</p>
-        <a href="/api/auth/login" className="text-accent underline">
-          Sign in again
-        </a>
+        <p className="text-red-400">
+          {error === "no_team_selected"
+            ? "Pick your team first."
+            : error === "no_data_yet"
+              ? "No data yet — the scraper hasn't run yet. Check back in a bit."
+              : `Couldn't load your roster (${error}).`}
+        </p>
+        {scrapedModeError ? (
+          <Link href="/" className="text-accent underline">
+            Who am I?
+          </Link>
+        ) : (
+          <a href="/api/auth/login" className="text-accent underline">
+            Sign in again
+          </a>
+        )}
       </main>
     );
   }
@@ -44,7 +58,7 @@ export default function RosterPage() {
     <div className="flex flex-1 flex-col">
       <RosterView
         data={data!}
-        logoutHref="/api/auth/logout"
+        logoutHref={data?.fetchedAt ? "/api/select-team?clear=1" : "/api/auth/logout"}
         leagueHref="/league"
         scheduleHref="/schedule"
       />

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { refreshTokens, yahooFantasyGet } from "@/lib/yahoo";
 import { extractTeamKey, extractRoster } from "@/lib/parseRoster";
-import { getSnapshot } from "@/lib/upstashSnapshot";
+import { getSnapshot, SELECTED_TEAM_COOKIE } from "@/lib/upstashSnapshot";
 
 const cookieOpts = {
   httpOnly: true,
@@ -11,17 +11,22 @@ const cookieOpts = {
 };
 
 export async function GET(req: NextRequest) {
-  if (process.env.DATA_SOURCE === "scrape") return getScrapedRoster();
+  if (process.env.DATA_SOURCE === "scrape") return getScrapedRoster(req);
   return getLiveRoster(req);
 }
 
-async function getScrapedRoster() {
+async function getScrapedRoster(req: NextRequest) {
   const { snapshot } = await getSnapshot();
   if (!snapshot) {
     return NextResponse.json({ error: "no_data_yet" }, { status: 503 });
   }
+  const teamId = req.cookies.get(SELECTED_TEAM_COOKIE)?.value;
+  const team = teamId ? snapshot.teams[teamId] : undefined;
+  if (!team) {
+    return NextResponse.json({ error: "no_team_selected" }, { status: 400 });
+  }
   return NextResponse.json(
-    { ...snapshot.roster, fetchedAt: snapshot.fetchedAt },
+    { teamName: team.teamName, players: team.players, fetchedAt: snapshot.fetchedAt },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

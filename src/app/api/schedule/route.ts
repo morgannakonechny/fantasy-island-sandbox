@@ -3,7 +3,7 @@ import { refreshTokens, yahooFantasyGet } from "@/lib/yahoo";
 import { extractTeamKey, extractRoster } from "@/lib/parseRoster";
 import { fetchWeekTeamGames } from "@/lib/espnSchedule";
 import { buildSchedule } from "@/lib/parseSchedule";
-import { getSnapshot } from "@/lib/upstashSnapshot";
+import { getSnapshot, SELECTED_TEAM_COOKIE } from "@/lib/upstashSnapshot";
 
 const cookieOpts = {
   httpOnly: true,
@@ -13,17 +13,22 @@ const cookieOpts = {
 };
 
 export async function GET(req: NextRequest) {
-  if (process.env.DATA_SOURCE === "scrape") return getScrapedSchedule();
+  if (process.env.DATA_SOURCE === "scrape") return getScrapedSchedule(req);
   return getLiveSchedule(req);
 }
 
-async function getScrapedSchedule() {
+async function getScrapedSchedule(req: NextRequest) {
   const { snapshot } = await getSnapshot();
   if (!snapshot) {
     return NextResponse.json({ error: "no_data_yet" }, { status: 503 });
   }
+  const teamId = req.cookies.get(SELECTED_TEAM_COOKIE)?.value;
+  const team = teamId ? snapshot.teams[teamId] : undefined;
+  if (!team) {
+    return NextResponse.json({ error: "no_team_selected" }, { status: 400 });
+  }
   return NextResponse.json(
-    { ...snapshot.schedule, fetchedAt: snapshot.fetchedAt },
+    { teamName: team.teamName, days: team.days, fetchedAt: snapshot.fetchedAt },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

@@ -1,14 +1,31 @@
 import { cookies } from "next/headers";
+import { getSnapshot, availableTeams, SELECTED_TEAM_COOKIE } from "@/lib/upstashSnapshot";
 
 export default async function Home(props: PageProps<"/">) {
   const scraped = process.env.DATA_SOURCE === "scrape";
   const cookieStore = await cookies();
-  const loggedIn =
-    scraped ||
-    Boolean(cookieStore.get("yahoo_access_token") ?? cookieStore.get("yahoo_refresh_token"));
   const searchParams = await props.searchParams;
   const error = searchParams.error;
   const errorMessage = Array.isArray(error) ? error[0] : error;
+
+  let loggedIn = false;
+  let teamOptions: { teamId: string; name: string }[] = [];
+  let selectedTeam: { teamId: string; name: string } | undefined;
+  let snapshotExists = false;
+
+  if (scraped) {
+    const { snapshot } = await getSnapshot();
+    if (snapshot) {
+      snapshotExists = true;
+      teamOptions = availableTeams(snapshot);
+      const selectedId = cookieStore.get(SELECTED_TEAM_COOKIE)?.value;
+      selectedTeam = teamOptions.find((t) => t.teamId === selectedId);
+    }
+  } else {
+    loggedIn = Boolean(
+      cookieStore.get("yahoo_access_token") ?? cookieStore.get("yahoo_refresh_token")
+    );
+  }
 
   return (
     <main className="hero flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
@@ -120,7 +137,67 @@ export default async function Home(props: PageProps<"/">) {
           {errorMessage}
         </p>
       )}
-      {loggedIn ? (
+      {scraped ? (
+        selectedTeam ? (
+          <div className="relative flex flex-col items-center gap-2">
+            <a
+              href="/roster"
+              className="rounded-lg bg-gradient-to-r from-accent to-accent-2 px-6 py-3 font-medium text-white shadow-[0_15px_40px_-10px_var(--accent-glow)] transition-transform hover:scale-[1.02]"
+            >
+              View my roster
+            </a>
+            <p className="text-xs text-muted">
+              Viewing as {selectedTeam.name} ·{" "}
+              <a href="/api/select-team?clear=1" className="underline hover:text-foreground">
+                switch team
+              </a>
+            </p>
+          </div>
+        ) : teamOptions.length > 0 ? (
+          <form
+            action="/api/select-team"
+            method="GET"
+            className="relative flex flex-col items-center gap-3"
+          >
+            <label
+              htmlFor="teamId"
+              className="text-xs font-semibold uppercase tracking-widest text-accent"
+            >
+              Who am I?
+            </label>
+            <div className="flex gap-2">
+              <select
+                id="teamId"
+                name="teamId"
+                required
+                defaultValue=""
+                className="rounded-lg border border-border bg-surface px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <option value="" disabled>
+                  Pick your team…
+                </option>
+                {teamOptions.map((t) => (
+                  <option key={t.teamId} value={t.teamId}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="rounded-lg bg-gradient-to-r from-accent to-accent-2 px-6 py-2 font-medium text-white shadow-[0_15px_40px_-10px_var(--accent-glow)] transition-transform hover:scale-[1.02]"
+              >
+                Let&apos;s go
+              </button>
+            </div>
+          </form>
+        ) : (
+          <p className="relative max-w-sm text-sm text-muted">
+            {snapshotExists
+              ? "No teams found in the last scrape — check back in a bit."
+              : "No data yet — the scraper hasn't run yet. Check back in a bit."}
+          </p>
+        )
+      ) : loggedIn ? (
         <a
           href="/roster"
           className="relative rounded-lg bg-gradient-to-r from-accent to-accent-2 px-6 py-3 font-medium text-white shadow-[0_15px_40px_-10px_var(--accent-glow)] transition-transform hover:scale-[1.02]"

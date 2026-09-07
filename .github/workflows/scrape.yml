@@ -8,7 +8,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,5 +23,4 @@ jobs:
           KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
           KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
           YAHOO_LEAGUE_ID: ${{ vars.YAHOO_LEAGUE_ID }}
-          YAHOO_TEAM_ID: ${{ vars.YAHOO_TEAM_ID }}
         run: npx tsx scripts/scrape-and-push.ts
