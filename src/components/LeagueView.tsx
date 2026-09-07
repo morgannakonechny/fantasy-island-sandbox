@@ -54,10 +54,82 @@ export function LeagueView({ data }: { data: LeagueData }) {
     <main className="mx-auto w-full max-w-2xl flex-1 p-6 sm:p-8">
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">League</p>
-        <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">Standings</h1>
+        <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
+          {data.week ? `Week ${data.week} Matchups` : "This Week's Matchups"}
+        </h1>
       </div>
 
-      <div className="mb-8 overflow-hidden rounded-xl border border-border bg-surface">
+      {data.matchups.length > 0 && (
+        <div className="mb-8 space-y-3">
+          {data.matchups.map((m, i) => {
+            const totalProjected = m.teams.reduce(
+              (sum, t) => sum + (t.projectedPoints ?? 0),
+              0
+            );
+            const winPct = (t: MatchupTeam) =>
+              totalProjected > 0 && t.projectedPoints !== undefined
+                ? Math.round((t.projectedPoints / totalProjected) * 100)
+                : undefined;
+            const [teamA, teamB] = m.teams;
+            const pctA = teamA ? winPct(teamA) : undefined;
+            const pctB = teamB ? winPct(teamB) : undefined;
+
+            return (
+              <div key={i} className="rounded-xl border border-border bg-surface p-4">
+                {m.teams.map((t) => {
+                  const isWinner = m.winnerTeamKey === t.teamKey;
+                  return (
+                    <div key={t.teamKey} className="flex items-center gap-3 py-1.5">
+                      <Avatar name={t.name} teamKey={t.teamKey} logoUrl={t.logoUrl} />
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`truncate font-medium ${isWinner ? "text-foreground" : "text-muted"}`}
+                        >
+                          {t.name}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p
+                          className={`font-semibold ${isWinner ? "text-accent" : "text-muted"}`}
+                        >
+                          {t.points !== undefined ? t.points.toFixed(1) : "--"}
+                        </p>
+                        {t.projectedPoints !== undefined && (
+                          <p className="text-xs text-muted">proj {t.projectedPoints.toFixed(1)}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {pctA !== undefined && pctB !== undefined && teamA && teamB && (
+                  <div className="mt-3">
+                    <div className="flex h-2 overflow-hidden rounded-full bg-surface-2">
+                      <div
+                        className="h-full"
+                        style={{ width: `${pctA}%`, backgroundColor: `#${colorFor(teamA.teamKey)}` }}
+                      />
+                      <div
+                        className="h-full"
+                        style={{ width: `${pctB}%`, backgroundColor: `#${colorFor(teamB.teamKey)}` }}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-between text-xs text-muted">
+                      <span>{pctA}% proj. to win</span>
+                      <span>{pctB}% proj. to win</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
+        Standings
+      </h2>
+      <div className="overflow-hidden rounded-xl border border-border bg-surface">
         {data.standings.map((t, i) => (
           <div
             key={t.teamKey}
@@ -85,55 +157,6 @@ export function LeagueView({ data }: { data: LeagueData }) {
           </div>
         ))}
       </div>
-
-      {data.matchups.length > 0 && (
-        <>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">
-            {data.week ? `Week ${data.week} Matchups` : "This Week's Matchups"}
-          </h2>
-          <div className="space-y-3">
-            {data.matchups.map((m, i) => {
-              const totalProjected = m.teams.reduce(
-                (sum, t) => sum + (t.projectedPoints ?? 0),
-                0
-              );
-              const winPct = (t: MatchupTeam) =>
-                totalProjected > 0 && t.projectedPoints !== undefined
-                  ? Math.round((t.projectedPoints / totalProjected) * 100)
-                  : undefined;
-
-              return (
-                <div key={i} className="rounded-xl border border-border bg-surface p-4">
-                  {m.teams.map((t) => {
-                    const isWinner = m.winnerTeamKey === t.teamKey;
-                    const pct = winPct(t);
-                    return (
-                      <div key={t.teamKey} className="flex items-center gap-3 py-1.5">
-                        <Avatar name={t.name} teamKey={t.teamKey} logoUrl={t.logoUrl} />
-                        <div className="min-w-0 flex-1">
-                          <p
-                            className={`truncate font-medium ${isWinner ? "text-foreground" : "text-muted"}`}
-                          >
-                            {t.name}
-                          </p>
-                          {pct !== undefined && (
-                            <p className="text-xs text-muted">{pct}% proj. to win</p>
-                          )}
-                        </div>
-                        <p
-                          className={`shrink-0 font-semibold ${isWinner ? "text-accent" : "text-muted"}`}
-                        >
-                          {t.points !== undefined ? t.points.toFixed(1) : "--"}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
     </main>
   );
 }
