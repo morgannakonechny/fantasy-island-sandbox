@@ -11,12 +11,7 @@ export default function RosterDemoPage() {
           Back home
         </Link>
       </p>
-      <RosterView
-        data={mockRoster}
-        logoutHref="/"
-        leagueHref="/league/demo"
-        scheduleHref="/schedule/demo"
-      />
+      <RosterView data={mockRoster} />
     </div>
   );
 }

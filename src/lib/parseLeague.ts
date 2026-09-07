@@ -77,6 +77,7 @@ export type MatchupTeam = {
   logoUrl?: string;
   managerName?: string;
   points?: number;
+  projectedPoints?: number;
 };
 
 export type Matchup = {

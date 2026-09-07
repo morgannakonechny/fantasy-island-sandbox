@@ -11,7 +11,7 @@ export default function LeagueDemoPage() {
           Back home
         </Link>
       </p>
-      <LeagueView data={mockLeague} homeHref="/roster/demo" />
+      <LeagueView data={mockLeague} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { teamColor } from "@/lib/nflTeamColors";
+import { teamTextColor } from "@/lib/nflTeamColors";
 import { positionStyle } from "@/lib/positionStyles";
 
 export type Player = {
@@ -14,55 +14,19 @@ export type Player = {
 
 export type RosterData = { teamName: string; players: Player[] };
 
-export function RosterView({
-  data,
-  logoutHref,
-  leagueHref,
-  scheduleHref,
-}: {
-  data: RosterData;
-  logoutHref: string;
-  leagueHref?: string;
-  scheduleHref?: string;
-}) {
+export function RosterView({ data }: { data: RosterData }) {
   const starters = data.players.filter((p) => p.position !== "BN").length;
   const bench = data.players.length - starters;
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-6 sm:p-8">
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-            Your Roster
-          </p>
-          <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
-            {data.teamName}
-          </h1>
-        </div>
-        <div className="flex shrink-0 gap-2">
-          {scheduleHref && (
-            <a
-              href={scheduleHref}
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
-            >
-              Schedule
-            </a>
-          )}
-          {leagueHref && (
-            <a
-              href={leagueHref}
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
-            >
-              League
-            </a>
-          )}
-          <a
-            href={logoutHref}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
-          >
-            Log out
-          </a>
-        </div>
+      <div className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent">
+          Your Roster
+        </p>
+        <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
+          {data.teamName}
+        </h1>
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-3">
@@ -86,7 +50,7 @@ export function RosterView({
           >
             <span
               className="h-8 w-1 shrink-0 rounded-full"
-              style={{ backgroundColor: teamColor(p.team) }}
+              style={{ backgroundColor: teamTextColor(p.team) }}
               aria-hidden
             />
             {p.imageUrl ? (

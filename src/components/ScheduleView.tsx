@@ -1,35 +1,17 @@
-import { teamColor, teamTextColor } from "@/lib/nflTeamColors";
+import { teamTextColor } from "@/lib/nflTeamColors";
 import { positionStyle } from "@/lib/positionStyles";
 import type { ScheduleDay } from "@/lib/parseSchedule";
 
 export type { ScheduleDay };
 
-export function ScheduleView({
-  teamName,
-  days,
-  homeHref,
-}: {
-  teamName: string;
-  days: ScheduleDay[];
-  homeHref: string;
-}) {
+export function ScheduleView({ teamName, days }: { teamName: string; days: ScheduleDay[] }) {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-6 sm:p-8">
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-            {teamName}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
-            Your Schedule This Week
-          </h1>
-        </div>
-        <a
-          href={homeHref}
-          className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
-        >
-          Roster
-        </a>
+      <div className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent">{teamName}</p>
+        <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
+          Your Schedule This Week
+        </h1>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -50,7 +32,7 @@ export function ScheduleView({
                   <div key={p.playerKey} className="flex items-center gap-3 px-4 py-3">
                     <span
                       className="h-8 w-1 shrink-0 rounded-full"
-                      style={{ backgroundColor: teamColor(p.team) }}
+                      style={{ backgroundColor: teamTextColor(p.team) }}
                       aria-hidden
                     />
                     {p.imageUrl ? (

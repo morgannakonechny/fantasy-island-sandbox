@@ -16,6 +16,7 @@ export type MatchupTeam = {
   logoUrl?: string;
   managerName?: string;
   points?: number;
+  projectedPoints?: number;
 };
 
 export type Matchup = {
@@ -48,20 +49,12 @@ function Avatar({ name, teamKey, logoUrl }: { name: string; teamKey: string; log
   );
 }
 
-export function LeagueView({ data, homeHref }: { data: LeagueData; homeHref: string }) {
+export function LeagueView({ data }: { data: LeagueData }) {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-6 sm:p-8">
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">League</p>
-          <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">Standings</h1>
-        </div>
-        <a
-          href={homeHref}
-          className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
-        >
-          Roster
-        </a>
+      <div className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent">League</p>
+        <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">Standings</h1>
       </div>
 
       <div className="mb-8 overflow-hidden rounded-xl border border-border bg-surface">
@@ -99,33 +92,45 @@ export function LeagueView({ data, homeHref }: { data: LeagueData; homeHref: str
             {data.week ? `Week ${data.week} Matchups` : "This Week's Matchups"}
           </h2>
           <div className="space-y-3">
-            {data.matchups.map((m, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-border bg-surface p-4"
-              >
-                {m.teams.map((t) => {
-                  const isWinner = m.winnerTeamKey === t.teamKey;
-                  return (
-                    <div key={t.teamKey} className="flex items-center gap-3 py-1.5">
-                      <Avatar name={t.name} teamKey={t.teamKey} logoUrl={t.logoUrl} />
-                      <div className="min-w-0 flex-1">
+            {data.matchups.map((m, i) => {
+              const totalProjected = m.teams.reduce(
+                (sum, t) => sum + (t.projectedPoints ?? 0),
+                0
+              );
+              const winPct = (t: MatchupTeam) =>
+                totalProjected > 0 && t.projectedPoints !== undefined
+                  ? Math.round((t.projectedPoints / totalProjected) * 100)
+                  : undefined;
+
+              return (
+                <div key={i} className="rounded-xl border border-border bg-surface p-4">
+                  {m.teams.map((t) => {
+                    const isWinner = m.winnerTeamKey === t.teamKey;
+                    const pct = winPct(t);
+                    return (
+                      <div key={t.teamKey} className="flex items-center gap-3 py-1.5">
+                        <Avatar name={t.name} teamKey={t.teamKey} logoUrl={t.logoUrl} />
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`truncate font-medium ${isWinner ? "text-foreground" : "text-muted"}`}
+                          >
+                            {t.name}
+                          </p>
+                          {pct !== undefined && (
+                            <p className="text-xs text-muted">{pct}% proj. to win</p>
+                          )}
+                        </div>
                         <p
-                          className={`truncate font-medium ${isWinner ? "text-foreground" : "text-muted"}`}
+                          className={`shrink-0 font-semibold ${isWinner ? "text-accent" : "text-muted"}`}
                         >
-                          {t.name}
+                          {t.points !== undefined ? t.points.toFixed(1) : "--"}
                         </p>
                       </div>
-                      <p
-                        className={`shrink-0 font-semibold ${isWinner ? "text-accent" : "text-muted"}`}
-                      >
-                        {t.points !== undefined ? t.points.toFixed(1) : "--"}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         </>
       )}

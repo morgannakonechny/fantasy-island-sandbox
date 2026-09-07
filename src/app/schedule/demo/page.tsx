@@ -12,7 +12,7 @@ export default function ScheduleDemoPage() {
           Back home
         </Link>
       </p>
-      <ScheduleView teamName={mockRoster.teamName} days={mockScheduleDays} homeHref="/roster/demo" />
+      <ScheduleView teamName={mockRoster.teamName} days={mockScheduleDays} />
     </div>
   );
 }

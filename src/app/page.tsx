@@ -212,17 +212,6 @@ export default async function Home(props: PageProps<"/">) {
           Sign in with Yahoo
         </a>
       )}
-      <div className="relative flex gap-4 text-sm text-muted">
-        <a href="/roster/demo" className="underline hover:text-foreground">
-          Preview roster
-        </a>
-        <a href="/league/demo" className="underline hover:text-foreground">
-          Preview league
-        </a>
-        <a href="/schedule/demo" className="underline hover:text-foreground">
-          Preview schedule
-        </a>
-      </div>
     </main>
   );
 }

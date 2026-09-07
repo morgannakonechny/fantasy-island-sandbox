@@ -125,12 +125,14 @@ export function scrapeMatchups(html: string): { week?: string; matchups: Matchup
         })
         .first();
       const actual = Number.parseFloat(scoreBlock.children(".Fz-lg").first().text().trim());
+      const projected = Number.parseFloat(scoreBlock.children(".F-shade").first().text().trim());
 
       teams.push({
         teamKey,
         name,
         logoUrl,
         points: Number.isFinite(actual) ? actual : undefined,
+        projectedPoints: Number.isFinite(projected) ? projected : undefined,
       });
     });
 
