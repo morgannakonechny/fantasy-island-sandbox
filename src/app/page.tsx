@@ -129,9 +129,6 @@ export default async function Home(props: PageProps<"/">) {
       <h1 className="relative bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
         Welcome to Fantasy Island
       </h1>
-      <p className="relative max-w-sm text-muted">
-        See your team and standings at a glance, straight from Yahoo Fantasy.
-      </p>
       {errorMessage && (
         <p className="relative max-w-sm rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-300">
           {errorMessage}
