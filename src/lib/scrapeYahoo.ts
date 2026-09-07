@@ -14,11 +14,9 @@ import * as cheerio from "cheerio";
 import type { RosterPlayer } from "@/lib/parseRoster";
 import type { StandingsTeam, Matchup, MatchupTeam } from "@/lib/parseLeague";
 
-function parsePoints(fanPtsText: string, projPtsText: string): number | undefined {
-  const fan = Number.parseFloat(fanPtsText);
-  if (Number.isFinite(fan)) return fan;
-  const proj = Number.parseFloat(projPtsText);
-  return Number.isFinite(proj) ? proj : undefined;
+function parseNum(text: string): number | undefined {
+  const n = Number.parseFloat(text);
+  return Number.isFinite(n) ? n : undefined;
 }
 
 export function scrapeRoster(html: string): RosterPlayer[] {
@@ -56,9 +54,27 @@ export function scrapeRoster(html: string): RosterPlayer[] {
 
     const fanPtsText = row.find("td.pts").first().text().trim();
     const projPtsText = row.find("td.pts").first().next().text().trim();
-    const points = parsePoints(fanPtsText, projPtsText);
+    // actualPoints is only set once the player's game has started/finished —
+    // Yahoo shows an em dash ("–") for Fan Pts before then. points keeps the
+    // existing display fallback (actual once played, else projected) used by
+    // the per-player badge; actualPoints/projectedPoints stay separate so
+    // roster-level totals can tell "scored so far" from "still projected".
+    const actualPoints = parseNum(fanPtsText);
+    const projectedPoints = parseNum(projPtsText);
+    const points = actualPoints ?? projectedPoints;
 
-    players.push({ playerKey, name, team, position, status, statusFull, imageUrl, points });
+    players.push({
+      playerKey,
+      name,
+      team,
+      position,
+      status,
+      statusFull,
+      imageUrl,
+      points,
+      actualPoints,
+      projectedPoints,
+    });
   });
 
   return players;

@@ -10,6 +10,8 @@ export type RosterPlayer = {
   statusFull?: string;
   imageUrl?: string;
   points?: number;
+  actualPoints?: number;
+  projectedPoints?: number;
 };
 
 export function extractTeamKey(

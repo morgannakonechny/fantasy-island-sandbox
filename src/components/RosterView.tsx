@@ -10,13 +10,23 @@ export type Player = {
   statusFull?: string;
   imageUrl?: string;
   points?: number;
+  actualPoints?: number;
+  projectedPoints?: number;
 };
 
 export type RosterData = { teamName: string; players: Player[] };
 
+const WARNING_STATUSES = new Set(["Q", "O", "D", "IR"]);
+
 export function RosterView({ data }: { data: RosterData }) {
-  const starters = data.players.filter((p) => p.position !== "BN").length;
+  const starterPlayers = data.players.filter((p) => p.position !== "BN");
+  const starters = starterPlayers.length;
   const bench = data.players.length - starters;
+
+  const hasProjections = starterPlayers.some((p) => p.projectedPoints !== undefined);
+  const gamesPlayed = starterPlayers.filter((p) => p.actualPoints !== undefined).length;
+  const totalPoints = starterPlayers.reduce((sum, p) => sum + (p.actualPoints ?? 0), 0);
+  const totalProjected = starterPlayers.reduce((sum, p) => sum + (p.projectedPoints ?? 0), 0);
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-6 sm:p-8">
@@ -39,6 +49,27 @@ export function RosterView({ data }: { data: RosterData }) {
           <p className="mt-1 text-2xl font-bold text-foreground">{bench}</p>
         </div>
       </div>
+
+      {hasProjections && (
+        <div className="mb-6 flex items-center justify-around rounded-2xl border border-border bg-surface px-4 py-4 text-center">
+          <div>
+            <p className="text-xs text-muted">Total points</p>
+            <p className="mt-1 text-lg font-bold text-foreground">{totalPoints.toFixed(1)}</p>
+          </div>
+          <div className="h-8 w-px shrink-0 bg-border" aria-hidden />
+          <div>
+            <p className="text-xs text-muted">Games played</p>
+            <p className="mt-1 text-lg font-bold text-foreground">
+              {gamesPlayed}/{starters}
+            </p>
+          </div>
+          <div className="h-8 w-px shrink-0 bg-border" aria-hidden />
+          <div>
+            <p className="text-xs text-muted">Projected points</p>
+            <p className="mt-1 text-lg font-bold text-foreground">{totalProjected.toFixed(1)}</p>
+          </div>
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-xl border border-border bg-surface">
         {data.players.map((p, i) => (
@@ -74,7 +105,7 @@ export function RosterView({ data }: { data: RosterData }) {
                   >
                     {" · "}
                     {p.status}
-                    {p.status === "Q" && (
+                    {WARNING_STATUSES.has(p.status) && (
                       <svg
                         viewBox="0 0 20 20"
                         fill="currentColor"
