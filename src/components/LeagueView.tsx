@@ -83,9 +83,14 @@ export function LeagueView({ data }: { data: LeagueData }) {
                       <Avatar name={t.name} teamKey={t.teamKey} logoUrl={t.logoUrl} />
                       <div className="min-w-0 flex-1">
                         <p
-                          className={`truncate font-medium ${isWinner ? "text-foreground" : "text-muted"}`}
+                          className={`flex items-center gap-1.5 truncate font-medium ${isWinner ? "text-foreground" : "text-muted"}`}
                         >
-                          {t.name}
+                          <span
+                            className="h-2 w-2 shrink-0 rounded-full"
+                            style={{ backgroundColor: `#${colorFor(t.teamKey)}` }}
+                            aria-hidden
+                          />
+                          <span className="truncate">{t.name}</span>
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
