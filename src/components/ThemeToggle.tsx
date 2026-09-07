@@ -16,13 +16,31 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     >
       {theme === "dark" ? (
         // Moon — click to switch to the daytime sea.
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden>
-          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden>
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
         </svg>
       ) : (
-        // Sun — click to switch to the night sea.
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden>
-          <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-1.657-5.657a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 9a1 1 0 110 2h-1a1 1 0 110-2h1zM5.05 4.05a1 1 0 011.414 0l.707.707A1 1 0 115.757 6.17l-.707-.707a1 1 0 010-1.414zM4 9a1 1 0 110 2H3a1 1 0 110-2h1zm1.05 6.95a1 1 0 010-1.414l.707-.707A1 1 0 117.17 15.243l-.707.707a1 1 0 01-1.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm4.95-1.05a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414z" />
+        // Sun — click to switch to the night sea. Built from plain
+        // primitives (a circle + 8 evenly-spaced rays) rather than one
+        // hand-written path, so it can't end up lopsided.
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          className="h-4 w-4"
+          aria-hidden
+        >
+          <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
+          <line x1="12" y1="2" x2="12" y2="4" />
+          <line x1="12" y1="20" x2="12" y2="22" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="2" y1="12" x2="4" y2="12" />
+          <line x1="20" y1="12" x2="22" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
       )}
     </button>

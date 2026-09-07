@@ -36,6 +36,7 @@ export type ScheduleEntry = RosterPlayer & {
   opponent: string;
   isHome: boolean;
   timeLabel: string;
+  kickoffMs: number;
 };
 
 export type ScheduleDay = {
@@ -74,11 +75,13 @@ export function buildSchedule(
       opponent: game.opponent,
       isHome: game.isHome,
       timeLabel,
+      kickoffMs: new Date(game.kickoff).getTime(),
     });
   }
 
   for (const day of days.values()) {
-    day.players.sort((a, b) => Number(b.isStarter) - Number(a.isStarter));
+    // Starters surface first, then earliest kickoff first within each group.
+    day.players.sort((a, b) => Number(b.isStarter) - Number(a.isStarter) || a.kickoffMs - b.kickoffMs);
   }
 
   return Array.from(days.values()).sort((a, b) => a.sortKey.localeCompare(b.sortKey));

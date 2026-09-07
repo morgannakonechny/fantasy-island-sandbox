@@ -7,6 +7,10 @@ function player(name: string) {
   return p;
 }
 
+function kickoffMs(dateLabel: string, timeLabel: string): number {
+  return new Date(`${dateLabel}, 2026 ${timeLabel}`).getTime();
+}
+
 export const mockScheduleDays: ScheduleDay[] = [
   {
     dayName: "MONDAY",
@@ -19,6 +23,7 @@ export const mockScheduleDays: ScheduleDay[] = [
         opponent: "MIA",
         isHome: false,
         timeLabel: "5:30 PM",
+        kickoffMs: kickoffMs("August 10", "5:30 PM"),
       },
       {
         ...player("Jayden Reed"),
@@ -26,6 +31,7 @@ export const mockScheduleDays: ScheduleDay[] = [
         opponent: "CHI",
         isHome: true,
         timeLabel: "6:30 PM",
+        kickoffMs: kickoffMs("August 10", "6:30 PM"),
       },
     ],
   },
@@ -46,6 +52,7 @@ export const mockScheduleDays: ScheduleDay[] = [
         opponent: "SEA",
         isHome: false,
         timeLabel: "3:00 PM",
+        kickoffMs: kickoffMs("August 15", "3:00 PM"),
       },
       {
         ...player("Trey McBride"),
@@ -53,6 +60,7 @@ export const mockScheduleDays: ScheduleDay[] = [
         opponent: "LAR",
         isHome: true,
         timeLabel: "7:00 PM",
+        kickoffMs: kickoffMs("August 15", "7:00 PM"),
       },
     ],
   },
@@ -62,11 +70,12 @@ export const mockScheduleDays: ScheduleDay[] = [
     sortKey: "2026-08-16",
     players: [
       {
-        ...player("CeeDee Lamb"),
+        ...player("Sam LaPorta"),
         isStarter: true,
-        opponent: "NYG",
-        isHome: true,
+        opponent: "GB",
+        isHome: false,
         timeLabel: "12:00 PM",
+        kickoffMs: kickoffMs("August 16", "12:00 PM"),
       },
       {
         ...player("Amon-Ra St. Brown"),
@@ -74,13 +83,15 @@ export const mockScheduleDays: ScheduleDay[] = [
         opponent: "GB",
         isHome: false,
         timeLabel: "12:00 PM",
+        kickoffMs: kickoffMs("August 16", "12:00 PM"),
       },
       {
-        ...player("Sam LaPorta"),
+        ...player("CeeDee Lamb"),
         isStarter: true,
-        opponent: "GB",
-        isHome: false,
-        timeLabel: "12:00 PM",
+        opponent: "NYG",
+        isHome: true,
+        timeLabel: "3:25 PM",
+        kickoffMs: kickoffMs("August 16", "3:25 PM"),
       },
       {
         ...player("Tank Bigsby"),
@@ -88,6 +99,7 @@ export const mockScheduleDays: ScheduleDay[] = [
         opponent: "HOU",
         isHome: true,
         timeLabel: "3:05 PM",
+        kickoffMs: kickoffMs("August 16", "3:05 PM"),
       },
     ],
   },
