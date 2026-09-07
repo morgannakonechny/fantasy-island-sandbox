@@ -1,0 +1,27 @@
+name: Scrape Yahoo Fantasy data
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Scrape and push to Upstash
+        env:
+          YAHOO_STORAGE_STATE_B64: ${{ secrets.YAHOO_STORAGE_STATE }}
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+          YAHOO_LEAGUE_ID: ${{ vars.YAHOO_LEAGUE_ID }}
+          YAHOO_TEAM_ID: ${{ vars.YAHOO_TEAM_ID }}
+        run: npx tsx scripts/scrape-and-push.ts
