@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Yahoo scraper — real session cookies / authenticated page captures. NEVER commit.
+/.yahoo-session/
+/scratch/
+state.json
+*.storageState.json
